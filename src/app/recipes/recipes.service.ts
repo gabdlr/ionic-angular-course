@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Recipe } from './recipe.model';
+import { AlertController } from '@ionic/angular';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -22,8 +24,31 @@ export class RecipesService {
     },
   ];
 
-  constructor() {}
+  constructor(
+    private alertController: AlertController,
+    private router: Router
+  ) {}
 
+  deleteRecipe(recipeId: string) {
+    this.alertController
+      .create({
+        header: 'Are you sure?',
+        message: 'Do you really want to delete the recipe?',
+        buttons: [
+          { text: 'Cancel', role: 'cancel' },
+          {
+            text: 'Delete',
+            handler: () => {
+              this.recipes = this.recipes.filter(
+                (recipe) => recipe.id !== recipeId
+              );
+              this.router.navigate(['/']);
+            },
+          },
+        ],
+      })
+      .then((alertEL) => alertEL.present());
+  }
   getAllRecipes() {
     return this.recipes.slice();
   }
